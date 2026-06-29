@@ -1,0 +1,37 @@
+#Se usa ESTA CONFIGURACION EN PRODUCCION
+#Se usa .yml para que tenga una forma de arbol y se usa mucho en entornos empresariales
+spring:
+  servlet:
+    multipart:
+      #Longitud de datos que acpeta como request el servidor (PREDETERMINADO)
+      max-request-size: 20MB
+      #Longitud de archivos manejados (PREDETERMINADO)
+      max-file-size: 10MB
+  cache:
+    #Se especifica donde se va a chachear la informacion (SIMPLE NO ES UTILIZADO SOLO ES A FINES PRACTICOS)
+    #La mas utilizada normalmente es REDIS
+    #LA APLICACION DE SPRING NO DEBE ALMACENAR MEMORIA. POR ESO SE CACHEA EXTERNAMENTE CON Redis
+    type: simple
+  #Se especifica como se va a llamar la pagina html de swagger para poder ver la documentacion de la api
+  springdoc:
+    #PERMITE CONFIGURAR EL NOMBRE D ELA PAGINA EN LA PAGINA EN LA QUE SE VA A DOCUMENTAR
+    swagger-ui:
+      path: /swagger-ui.html
+
+  #Propiedades extra para poder visualizar mejor la salud de la aplicacion
+management:
+  #Se pueden especificar metricas para el comportamiento de la aplicacion
+  #Se pueden utilizar otros sistemas como grafana o prometeus para poder tener una mejor visualizacion
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http-server:
+          requests: true
+

@@ -1,0 +1,29 @@
+package com.springcourse.expert.product.application.query.getall;
+
+import com.springcourse.expert.product.domain.entity.Product;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+
+import java.util.List;
+
+/*
+ * LAS ACCIONES QUE RETORNAN UN TIPO DE DATO
+ *
+ * VAN DENTRO DEL PAQUETE DE query
+ *
+ *
+ * SIEMPRE SE RECOMIENDA SEGUIR EL ESTANDAR
+ *
+ * NameObjectActionResponse
+ *
+ * REPRESENTA A UN OBJETO QUE SE RETORNARA
+ *
+ * */
+@Data
+@Builder
+@AllArgsConstructor
+public class GetAllProductResponse {
+
+    private List<Product> product;
+}

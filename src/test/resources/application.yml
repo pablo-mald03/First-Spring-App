@@ -1,0 +1,9 @@
+#Se usa .yml para que tenga una forma de arbol y se usa mucho en entornos empresariales
+spring:
+  application:
+    name: expert
+
+  #Se utiliza para poder activar ciertos perfiles de properties para spring
+  profiles:
+    #Se pueden pasar variables de entorno y configurarlas
+    active: test

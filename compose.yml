@@ -1,0 +1,47 @@
+version: "3.1"
+
+services:
+  spring-boot:
+    build: ./
+    mem_reservation: 512M
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    environment:
+      PROFILE: prod
+
+
+  postgres:
+    #Imagen por defecto que tiene docker
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+    #Puerto de docker donde se va a ejecutar postgress y el puerto que se va a exponer
+    ports:
+      - "5432:5432"
+    #Volumenes es donde se va a almacenar la informacion o data de sql
+    volumes:
+      #Postres_data: /storage data url
+      - postgres_data:/var/lib/postgresql/data
+      #/storage data url/init.sql (STARTER DE LA BASE DE DATOS)
+      #docker tiene un punto de entrada donde se van a ejecutar archivos mientras se esta buildeando el docker
+      #EL DIRECTORIO SE ESPECIFICA DIRECTAMENTE EN docker-config/database ESTE RECONOCERA LOS COMANDOS SOLITO
+      - ./docker-config/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    #Checkeo de salud de la base de datos
+    healthcheck:
+      #Hara 3 intentos en el intervalo y tiempo especificado el comando  bash
+      test: [ "CMD-SHELL", "pg_isready -U root -d spring" ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+#se especifica el nombre del volumen donde se almacenara la data
+volumes:
+  postgres_data:
