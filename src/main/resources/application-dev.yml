@@ -1,6 +1,23 @@
 #Se usa ESTA CONFIGURACION EN ENTORNO DE DESARROLLO
 #Se usa .yml para que tenga una forma de arbol y se usa mucho en entornos empresariales
 spring:
+
+  #se configuran los puertos en los que va a estar la base de datos y credenciales
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
   servlet:
     multipart:
       #Longitud de datos que acpeta como request el servidor (PREDETERMINADO)

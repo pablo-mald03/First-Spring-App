@@ -17,6 +17,17 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
+
+/*
+ * SI HAY VARIAS IMPLEMENTACIONES DE LA INTERFACE QUE VIENE DEL PUERTO
+ *
+ * SIMPLEMENTE SE PUEDE GENERAR LA ANOTACION
+ * @Primary
+ *
+ * IDENTIFICA COMO INSTANCIA PRIMARIA A INYECTAR
+ *
+ *
+ * */
 public class ProductRepositoryImpl implements ProductRepository {
 
     private final List<ProductEntity> productList = new ArrayList<>();

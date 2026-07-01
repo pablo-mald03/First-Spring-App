@@ -5,7 +5,23 @@ services:
     build: ./
     mem_reservation: 512M
     ports:
-      - "8080:8080"
+      - "${HOST_APP_PORT}:8080"
+      -
+      #DECLARA AUTOMATICAMENTE EL ENTORNO SUBE LAS VARIABLES AL CONTENEDOR
+    environment:
+
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+
+      DB_HOST: ${DB_HOST}
+
+      DB_PORT: ${DB_PORT}
+
+      DB_NAME: ${DB_NAME}
+
+      DB_USERNAME: ${DB_USERNAME}
+
+      DB_PASSWORD: ${DB_PASSWORD}
+
     depends_on:
       postgres:
         condition: service_healthy
@@ -14,19 +30,22 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-    environment:
-      PROFILE: prod
-
 
   postgres:
     #Imagen por defecto que tiene docker
     image: pgvector/pgvector:pg17
+
+    #SE DEFINEN LAS VARIABLES DE ENTORNO QUE TENDRAN LAS CONFIGURACIONES EN LA APLICACION Y EN DOCKER
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
+
+      POSTGRES_USER: ${POSTGRES_USER}
+
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+      POSTGRES_DB: ${POSTGRES_DB}
     #Puerto de docker donde se va a ejecutar postgress y el puerto que se va a exponer
     ports:
-      - "5432:5432"
+      - "${HOST_POSTGRES_PORT}:5432"
     #Volumenes es donde se va a almacenar la informacion o data de sql
     volumes:
       #Postres_data: /storage data url
