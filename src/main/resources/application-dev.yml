@@ -29,6 +29,14 @@ spring:
     #La mas utilizada normalmente es REDIS
     #LA APLICACION DE SPRING NO DEBE ALMACENAR MEMORIA. POR ESO SE CACHEA EXTERNAMENTE CON Redis
     type: simple
+
+  #SE PUEDE ESPECIFICAR UNA ALIMENTACION A LA BASE DE DATOS (SEEDS)
+  #PERO NO ES UTILIZADA MAYORMENTE PORQUE CAUSA EXCEPCIONES SI YA ESTAN INSERTADAS Y SIEMPRE INTENTA INSERTAR DE NUEVO LOS DATOS
+  #CADA QUE ARRANCA LA APLICACION
+  #  sql:
+  #    init:
+  #      mode: always
+  #      data-locations: classpath:data.sql
   #Se especifica como se va a llamar la pagina html de swagger para poder ver la documentacion de la api
   springdoc:
     #PERMITE CONFIGURAR EL NOMBRE D ELA PAGINA EN LA PAGINA EN LA QUE SE VA A DOCUMENTAR

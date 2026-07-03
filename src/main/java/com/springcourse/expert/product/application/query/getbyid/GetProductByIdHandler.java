@@ -1,6 +1,6 @@
 package com.springcourse.expert.product.application.query.getbyid;
 
-import com.springcourse.expert.common.mediator.RequestHandler;
+import com.springcourse.expert.common.application.mediator.RequestHandler;
 import com.springcourse.expert.product.domain.entity.Product;
 import com.springcourse.expert.product.domain.exception.ProductNotFoundException;
 import com.springcourse.expert.product.domain.port.ProductRepository;
@@ -21,7 +21,7 @@ public class GetProductByIdHandler implements RequestHandler<GetProductByIdReque
         log.info("Getting product with id {}", request.getId());
 
         Product product = productRepository.findById(request.getId()).orElseThrow(() -> new ProductNotFoundException(request.getId()));
-        
+
         log.info("Found product with id {}", product.getId());
         return new GetProductByIdResponse(product);
     }

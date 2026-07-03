@@ -1,4 +1,4 @@
-package com.springcourse.expert.common.mediator;
+package com.springcourse.expert.common.application.mediator;
 
 /*
  * T: Es el tipo de clase que hara la peticion ES LA RESPECTIVA ENTRADA

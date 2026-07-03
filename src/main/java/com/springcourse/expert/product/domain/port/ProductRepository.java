@@ -1,20 +1,22 @@
 package com.springcourse.expert.product.domain.port;
 
+import com.springcourse.expert.common.domain.PaginationQuery;
+import com.springcourse.expert.common.domain.PaginationResult;
 import com.springcourse.expert.product.domain.entity.Product;
+import com.springcourse.expert.product.domain.entity.ProductFilter;
 
-import java.util.List;
 import java.util.Optional;
 
 /*LA INTERFACE REPRESENTA EL PUERTO QUE CONECTA AL REPOSITORIO*/
 public interface ProductRepository {
 
-    void save(Product product);
+    Product save(Product product);
 
     Optional<Product> findById(Long id);
 
-    List<Product> findAll();
+    PaginationResult<Product> findAll(PaginationQuery paginationQuery, ProductFilter productFilter);
 
-    void update(Product product);
+    Product update(Product product);
 
     void deleteById(Long id);
 }

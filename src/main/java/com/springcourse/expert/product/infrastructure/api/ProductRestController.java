@@ -1,5 +1,6 @@
 package com.springcourse.expert.product.infrastructure.api;
 
+import com.springcourse.expert.common.domain.PaginationResult;
 import com.springcourse.expert.product.infrastructure.api.dto.CreateProductDto;
 import com.springcourse.expert.product.infrastructure.api.dto.ProductDto;
 import com.springcourse.expert.product.infrastructure.api.dto.UpdateProductDto;
@@ -7,13 +8,10 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 public interface ProductRestController {
 
-    ResponseEntity<List<ProductDto>> getAllProducts(@RequestParam(required = false) String pageSize);
+    ResponseEntity<PaginationResult<ProductDto>> getAllProducts(int pageNumber, int pageSize, String sortBy, String direction, String name, String description, Double priceMin, Double priceMax);
 
     ResponseEntity<ProductDto> getProductById(@PathVariable Long id);
 

@@ -1,13 +1,12 @@
 package com.springcourse.expert.product.application.query.getall;
 
-import com.springcourse.expert.common.mediator.RequestHandler;
+import com.springcourse.expert.common.application.mediator.RequestHandler;
+import com.springcourse.expert.common.domain.PaginationResult;
 import com.springcourse.expert.product.domain.entity.Product;
 import com.springcourse.expert.product.domain.port.ProductRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -33,8 +32,7 @@ public class GetAllProductHandler implements RequestHandler<GetAllProductRequest
 
         log.info("Getting all products");
 
-        List<Product> products = productRepository.findAll();
-        log.info("Found {} products", products.size());
+        PaginationResult<Product> products = productRepository.findAll(request.getPaginationQuery(), request.getProductFilter());
         return new GetAllProductResponse(products);
     }
 

@@ -1,6 +1,6 @@
 package com.springcourse.expert.product.application.command.delete;
 
-import com.springcourse.expert.common.mediator.RequestHandler;
+import com.springcourse.expert.common.application.mediator.RequestHandler;
 import com.springcourse.expert.product.domain.port.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.springcourse.expert.common.config;
+package com.springcourse.expert.common.infrastructure.config;
 
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Configuration;

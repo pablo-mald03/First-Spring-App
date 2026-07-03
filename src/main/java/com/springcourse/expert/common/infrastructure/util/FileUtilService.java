@@ -1,4 +1,4 @@
-package com.springcourse.expert.common.util;
+package com.springcourse.expert.common.infrastructure.util;
 
 
 import org.springframework.stereotype.Service;

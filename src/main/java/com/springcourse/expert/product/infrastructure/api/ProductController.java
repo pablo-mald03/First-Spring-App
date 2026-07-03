@@ -1,13 +1,18 @@
 package com.springcourse.expert.product.infrastructure.api;
 
-import com.springcourse.expert.common.mediator.Mediator;
+import com.springcourse.expert.common.application.mediator.Mediator;
+import com.springcourse.expert.common.domain.PaginationQuery;
+import com.springcourse.expert.common.domain.PaginationResult;
 import com.springcourse.expert.product.application.command.create.CreateProductRequest;
+import com.springcourse.expert.product.application.command.create.CreateProductResponse;
 import com.springcourse.expert.product.application.command.delete.DeleteProductRequest;
 import com.springcourse.expert.product.application.command.update.UpdateProductRequest;
 import com.springcourse.expert.product.application.query.getall.GetAllProductRequest;
 import com.springcourse.expert.product.application.query.getall.GetAllProductResponse;
 import com.springcourse.expert.product.application.query.getbyid.GetProductByIdRequest;
 import com.springcourse.expert.product.application.query.getbyid.GetProductByIdResponse;
+import com.springcourse.expert.product.domain.entity.Product;
+import com.springcourse.expert.product.domain.entity.ProductFilter;
 import com.springcourse.expert.product.infrastructure.api.dto.CreateProductDto;
 import com.springcourse.expert.product.infrastructure.api.dto.ProductDto;
 import com.springcourse.expert.product.infrastructure.api.dto.UpdateProductDto;
@@ -21,7 +26,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -46,18 +50,86 @@ public class ProductController implements ProductRestController {
      *
      * INDICA QUE PUEDEN O NO VENIR LOS PARAMETROS ESPECIFICADOS
      *
+     * DE ESTA FORMA SE PUEDE PODER OFRECER PAGINACION DESDE LA API CON LOS SIGUIENTES ATRIBUTOS:
+     *
+     * PARA EVITAR BUSCAR LA INFORMACION DE UN SOLO
+     *
+     * (RECUERDO)
+     * */
+//    @Operation(summary = "Get all products", description = "Get all products")
+//    @GetMapping("")
+//    public ResponseEntity<PaginationResult<ProductDto>> getAllProducts(
+//            @RequestParam(defaultValue = "0") int pageNumber,
+//            @RequestParam(defaultValue = "5") int pageSize,
+//            @RequestParam(defaultValue = "id") String sortBy,
+//            @RequestParam(defaultValue = "asc") String direction,
+//            @RequestParam(required = false) String name
+//    ) {
+//
+//        log.info("Getting all products");
+//
+//        PaginationQuery paginationQuery = new PaginationQuery(pageNumber, pageSize, sortBy, direction);
+//        GetAllProductResponse response = mediator.dispatch(new GetAllProductRequest(paginationQuery));
+//
+//        PaginationResult<Product> productsPage = response.getProductsPage();
+//
+//        PaginationResult<ProductDto> productsDtoPage = new PaginationResult<>(
+//                productsPage.getContent().stream().map(productMapper::mapToProductDto).toList()
+//                , productsPage.getPage(),
+//                productsPage.getSize(),
+//                productsPage.getTotalPages(),
+//                productsPage.getTotalElements());
+//
+//        return ResponseEntity.ok(productsDtoPage);
+//    }
+
+
+    /*
+     * ResponseEntity tiene el scope mientras vive la peticion hasta que retorna
+     * posteriormente se elimina en el garbage collector
+     *
+     * required= false
+     *
+     * INDICA QUE PUEDEN O NO VENIR LOS PARAMETROS ESPECIFICADOS
+     *
+     * DE ESTA FORMA SE PUEDE PODER OFRECER PAGINACION DESDE LA API CON LOS SIGUIENTES ATRIBUTOS:
+     *
+     * PARA EVITAR BUSCAR LA INFORMACION DE UN SOLO
+     *
+     * TAMBIEN SE PUEDEN AGREGAR FILTRADOS DINAMICOS (ESTO OFRECE PAGINACION DINAMICA CON PARAMETROS SEGUN LOS PIDA EL CLIENTE)
+     *
      * */
     @Operation(summary = "Get all products", description = "Get all products")
     @GetMapping("")
-    public ResponseEntity<List<ProductDto>> getAllProducts(@RequestParam(required = false) String pageSize) {
+    public ResponseEntity<PaginationResult<ProductDto>> getAllProducts(
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "5") int pageSize,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) Double priceMin,
+            @RequestParam(required = false) Double priceMax
+    ) {
 
         log.info("Getting all products");
-        GetAllProductResponse response = mediator.dispatch(new GetAllProductRequest());
 
-        List<ProductDto> productDtos = response.getProduct().stream().map(productMapper::mapToProductDto).toList();
+        PaginationQuery paginationQuery = new PaginationQuery(pageNumber, pageSize, sortBy, direction);
 
-        log.info("Found {} products", productDtos.size());
-        return ResponseEntity.ok(productDtos);
+        ProductFilter productFilter = new ProductFilter(name, description, priceMin, priceMax);
+
+        GetAllProductResponse response = mediator.dispatch(new GetAllProductRequest(paginationQuery, productFilter));
+
+        PaginationResult<Product> productsPage = response.getProductsPage();
+
+        PaginationResult<ProductDto> productsDtoPage = new PaginationResult<>(
+                productsPage.getContent().stream().map(productMapper::mapToProductDto).toList()
+                , productsPage.getPage(),
+                productsPage.getSize(),
+                productsPage.getTotalPages(),
+                productsPage.getTotalElements());
+
+        return ResponseEntity.ok(productsDtoPage);
     }
 
     @Operation(summary = "Get product by id", description = "Get product by id")
@@ -94,16 +166,18 @@ public class ProductController implements ProductRestController {
     @PostMapping("")
     public ResponseEntity<Void> saveProduct(@ModelAttribute @Valid CreateProductDto product) {
 
-        log.info("Saving product with id {}", product.getId());
+        log.info("Saving product");
 
         /*PERMITE MAPEAR EL DTO QUE VIENE EN EL REQUEST HACIA EL HANDLER*/
         CreateProductRequest request = productMapper.mapToCreateProductRequest(product);
 
-        mediator.dispatch(request);
+        CreateProductResponse response = mediator.dispatch(request);
 
-        log.info("Product with id {} was saved", product.getId());
+        Product productResponse = response.getProduct();
 
-        return ResponseEntity.created(URI.create("/api/v1/products/".concat(product.getId().toString()))).build();
+        log.info("Product with id {} was saved", productResponse.getId());
+
+        return ResponseEntity.created(URI.create("/api/v1/products/".concat(productResponse.getId().toString()))).build();
     }
 
     /*

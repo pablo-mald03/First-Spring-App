@@ -1,4 +1,4 @@
-package com.springcourse.expert.common.exceptions;
+package com.springcourse.expert.common.infrastructure.exceptions;
 
 import com.springcourse.expert.product.domain.exception.ProductNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;

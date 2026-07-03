@@ -1,0 +1,16 @@
+INSERT INTO products (name, image, price)
+VALUES ('Laptop Gamer', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA001', 1299.99),
+       ('Mouse Inalámbrico', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA002', 24.99),
+       ('Teclado Mecánico RGB', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA003', 79.50),
+       ('Monitor 27 Pulgadas', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA004', 289.99),
+       ('Auriculares Bluetooth', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA005', 59.90),
+       ('Webcam Full HD', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA006', 49.99),
+       ('Disco SSD 1TB', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA007', 109.99),
+       ('Memoria RAM 16GB DDR4', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA008', 74.95),
+       ('Silla Ergonómica', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA009', 199.99),
+       ('Micrófono USB', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA010', 89.99),
+       ('Tablet 10 Pulgadas', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA011', 249.99),
+       ('Smartwatch Deportivo', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA012', 159.90),
+       ('Cargador USB-C 65W', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA013', 34.99),
+       ('Hub USB 3.0', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA014', 27.50),
+       ('Impresora Multifuncional', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA015', 179.99);

@@ -1,4 +1,4 @@
-package com.springcourse.expert.common.mediator;
+package com.springcourse.expert.common.application.mediator;
 
 /*
  * Esta interface que es la entrada

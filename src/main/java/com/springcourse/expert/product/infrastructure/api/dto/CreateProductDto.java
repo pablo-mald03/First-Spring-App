@@ -18,7 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class CreateProductDto {
 
 
-    private Long id;
+    /*El ID NO LO PIDE LA ENTIDAD*/
+    // private Long id;
     /*Valida que no hayan espacios y que tenga mas de algun campo*/
     @NotBlank(message = "El nombre es requerido")
     private String name;

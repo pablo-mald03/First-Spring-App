@@ -1,17 +1,24 @@
 package com.springcourse.expert.product.infrastructure.database;
 
+import com.springcourse.expert.common.domain.PaginationQuery;
+import com.springcourse.expert.common.domain.PaginationResult;
 import com.springcourse.expert.product.domain.entity.Product;
+import com.springcourse.expert.product.domain.entity.ProductFilter;
 import com.springcourse.expert.product.domain.port.ProductRepository;
 import com.springcourse.expert.product.infrastructure.database.entity.ProductEntity;
+import com.springcourse.expert.product.infrastructure.database.entity.ProductSpecification;
 import com.springcourse.expert.product.infrastructure.database.mapper.ProductEntityMapper;
+import com.springcourse.expert.product.infrastructure.database.repository.QueryProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -30,14 +37,18 @@ import java.util.Optional;
  * */
 public class ProductRepositoryImpl implements ProductRepository {
 
-    private final List<ProductEntity> productList = new ArrayList<>();
+    /*LISTA LOCAL DE INFORMACION (RECUERDO)*/
+    // private final List<ProductEntity> productList = new ArrayList<>();
+
+    private final QueryProductRepository productRepository;
 
     private final ProductEntityMapper productEntityMapper;
 
     @Override
-    public void save(Product product) {
+    public Product save(Product product) {
         ProductEntity productEntity = productEntityMapper.mapToProductEntity(product);
-        productList.add(productEntity);
+        ProductEntity productResponse = productRepository.save(productEntity);
+        return productEntityMapper.mapToProduct(productResponse);
     }
 
     /*(FORMA MAS FACIL DE HACERLO PENDIENTE INTEGRACION REAL)
@@ -56,19 +67,62 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public Optional<Product> findById(Long id) {
         log.info("Getting product with id {}", id);
-        return productList.stream().filter(product -> product.getId().equals(id)).findFirst().map(productEntityMapper::mapToProduct);
+        /*(RECUERDO)*/
+        // return productList.stream().filter(product -> product.getId().equals(id)).findFirst().map(productEntityMapper::mapToProduct);
+        return productRepository.findById(id).map(productEntityMapper::mapToProduct);
+    }
+
+    /*(RECUERDO SIN PAGINACION)*/
+//    @Override
+//    public List<Product> findAll() {
+//        /*(RECUERDO)*/
+//        //return productList.stream().map(productEntityMapper::mapToProduct).toList();
+//        return productRepository.findAll().stream().map(productEntityMapper::mapToProduct).toList();
+//    }
+
+    /*
+     * FindAll Con paginacion
+     * */
+    @Override
+    public PaginationResult<Product> findAll(PaginationQuery paginationQuery, ProductFilter productFilter) {
+
+        /*SE PUEDEN ESPECIFICAR LA DIRECCION DE LOS OBJETOS BUSCADOS Y ALGUN FILTRO O PARAMETRO DE REFERENCIAR*/
+        PageRequest pageRequest = PageRequest.of(
+                paginationQuery.getPage(),
+                paginationQuery.getSize(),
+                Sort.by(Sort.Direction.fromString(paginationQuery.getDirection()), paginationQuery.getSortBy())
+        );
+
+        /*
+         * CON LAS SPECIFICACIONES DE JPA SE PUEDEN ESPECIFICAR FILTROS DINAMICOS
+         * DE ESTA FORMA SE PUEDEN CREAR PAGINACIONES MAS FACILES
+         * */
+        Specification<ProductEntity> specification = Specification.allOf(
+                ProductSpecification.byName(productFilter.getName())
+                        .and(ProductSpecification.byDescription(productFilter.getDescription())
+                                .and(ProductSpecification.byPrice(productFilter.getPriceMin(), productFilter.getPriceMax())))
+
+        );
+
+        Page<ProductEntity> page = productRepository.findAll(specification, pageRequest);
+        return new PaginationResult<>(
+                page.getContent().stream().map(productEntityMapper::mapToProduct).toList(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalPages(),
+                page.getTotalElements()
+
+        );
     }
 
     @Override
-    public List<Product> findAll() {
-        return productList.stream().map(productEntityMapper::mapToProduct).toList();
-    }
-
-    @Override
-    public void update(Product product) {
+    public Product update(Product product) {
         ProductEntity productEntity = productEntityMapper.mapToProductEntity(product);
-        productList.removeIf(p -> p.getId().equals(productEntity.getId()));
-        productList.add(productEntity);
+        /*(RECUERDO)*/
+       /* productList.removeIf(p -> p.getId().equals(productEntity.getId()));
+        productList.add(productEntity);*/
+        ProductEntity productResponse = productRepository.save(productEntity);
+        return productEntityMapper.mapToProduct(productResponse);
     }
 
     /*(FORMA MAS FACIL DE HACERLO PENDIENTE INTEGRACION REAL)
@@ -84,6 +138,8 @@ public class ProductRepositoryImpl implements ProductRepository {
     @CacheEvict(value = "products", key = "#id")
     @Override
     public void deleteById(Long id) {
-        productList.removeIf(product -> product.getId().equals(id));
+        /*(RECUERDO)*/
+        //productList.removeIf(product -> product.getId().equals(id));
+        productRepository.deleteById(id);
     }
 }

@@ -1,7 +1,7 @@
 package com.springcourse.expert.product.application.command.create;
 
-import com.springcourse.expert.common.mediator.RequestHandler;
-import com.springcourse.expert.common.util.FileUtilService;
+import com.springcourse.expert.common.application.mediator.RequestHandler;
+import com.springcourse.expert.common.infrastructure.util.FileUtilService;
 import com.springcourse.expert.product.domain.entity.Product;
 import com.springcourse.expert.product.domain.port.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ import org.springframework.stereotype.Service;
  *
  * */
 @Slf4j
-public class CreateProductHandler implements RequestHandler<CreateProductRequest, Void> {
+public class CreateProductHandler implements RequestHandler<CreateProductRequest, CreateProductResponse> {
 
     private final ProductRepository productRepository;
     private final FileUtilService fileUtilService;
@@ -61,25 +61,24 @@ public class CreateProductHandler implements RequestHandler<CreateProductRequest
      * handle: es la ejecucion de la accion a realizar
      * */
     @Override
-    public Void handle(CreateProductRequest request) {
+    public CreateProductResponse handle(CreateProductRequest request) {
 
-        log.info("Creating product with id {}", request.getId());
+        log.info("Creating product ");
 
         String uniqueFileName = fileUtilService.saveProductImage(request.getFile());
 
         Product product = Product.builder()
-                .id(request.getId())
                 .name(request.getName())
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .image(uniqueFileName)
                 .build();
-        productRepository.save(product);
-        log.info("Product with id {} was created", request.getId());
+        Product saved = productRepository.save(product);
+        log.info("Product with id {} was created", saved.getId());
 
 
         /*LOS VOID RETORNAN NULL PORQUE NO RETORNAN NADA*/
-        return null;
+        return new CreateProductResponse(saved);
     }
 
     /*

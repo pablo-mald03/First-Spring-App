@@ -1,6 +1,6 @@
 package com.springcourse.expert.product.application.query.getbyid;
 
-import com.springcourse.expert.common.mediator.Request;
+import com.springcourse.expert.common.application.mediator.Request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

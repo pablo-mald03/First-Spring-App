@@ -63,10 +63,10 @@ public class FixProductsPriceSchedule {
          * */
         log.info("Fixing products price");
 
-        productRepository.findAll().forEach(product -> {
-            product.setPrice(product.getPrice() * 1.1);
-            productRepository.update(product);
-        });
+//        productRepository.findAll().forEach(product -> {
+//            product.setPrice(product.getPrice() * 1.1);
+//            productRepository.update(product);
+//        });
 
         log.info("Finished fixing products price");
     }

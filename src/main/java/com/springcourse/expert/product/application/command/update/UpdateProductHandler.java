@@ -1,7 +1,7 @@
 package com.springcourse.expert.product.application.command.update;
 
-import com.springcourse.expert.common.mediator.RequestHandler;
-import com.springcourse.expert.common.util.FileUtilService;
+import com.springcourse.expert.common.application.mediator.RequestHandler;
+import com.springcourse.expert.common.infrastructure.util.FileUtilService;
 import com.springcourse.expert.product.domain.entity.Product;
 import com.springcourse.expert.product.domain.port.ProductRepository;
 import lombok.RequiredArgsConstructor;

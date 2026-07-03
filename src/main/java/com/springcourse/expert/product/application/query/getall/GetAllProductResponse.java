@@ -1,11 +1,10 @@
 package com.springcourse.expert.product.application.query.getall;
 
+import com.springcourse.expert.common.domain.PaginationResult;
 import com.springcourse.expert.product.domain.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.List;
 
 /*
  * LAS ACCIONES QUE RETORNAN UN TIPO DE DATO
@@ -25,5 +24,5 @@ import java.util.List;
 @AllArgsConstructor
 public class GetAllProductResponse {
 
-    private List<Product> product;
+    private PaginationResult<Product> productsPage;
 }
