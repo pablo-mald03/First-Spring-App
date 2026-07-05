@@ -6,9 +6,9 @@ import com.springcourse.expert.product.domain.entity.Product;
 import com.springcourse.expert.product.domain.entity.ProductFilter;
 import com.springcourse.expert.product.domain.port.ProductRepository;
 import com.springcourse.expert.product.infrastructure.database.entity.ProductEntity;
-import com.springcourse.expert.product.infrastructure.database.entity.ProductSpecification;
 import com.springcourse.expert.product.infrastructure.database.mapper.ProductEntityMapper;
 import com.springcourse.expert.product.infrastructure.database.repository.QueryProductRepository;
+import com.springcourse.expert.product.infrastructure.database.specification.ProductSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -69,6 +69,9 @@ public class ProductRepositoryImpl implements ProductRepository {
         log.info("Getting product with id {}", id);
         /*(RECUERDO)*/
         // return productList.stream().filter(product -> product.getId().equals(id)).findFirst().map(productEntityMapper::mapToProduct);
+
+        //(RECUERDO SIN RELACION)
+        //return productRepository.findById(id).map(productEntityMapper::mapToProduct);
         return productRepository.findById(id).map(productEntityMapper::mapToProduct);
     }
 
@@ -115,6 +118,10 @@ public class ProductRepositoryImpl implements ProductRepository {
         );
     }
 
+    /*
+     * EJEMPLO DE EAGGER VS LAZY fetchType
+     *
+     * */
     @Override
     public Product update(Product product) {
         ProductEntity productEntity = productEntityMapper.mapToProductEntity(product);
@@ -122,6 +129,16 @@ public class ProductRepositoryImpl implements ProductRepository {
        /* productList.removeIf(p -> p.getId().equals(productEntity.getId()));
         productList.add(productEntity);*/
         ProductEntity productResponse = productRepository.save(productEntity);
+
+        /*
+         * Si se tiene configurado el fetchType EAGGER ya se carga directamente la relacion
+         * cuando se esta llamando el Entity
+         *
+         * Si se tiene configurado el fetchType LAZY se carga SOLO CUANDO SE LLAMA AL METODO
+         * cuando se esta llamando el Entity
+         * */
+        //ProductDetailEntity productDetailEntity = productEntity.getProductDetail();
+
         return productEntityMapper.mapToProduct(productResponse);
     }
 

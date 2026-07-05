@@ -1,8 +1,13 @@
 package com.springcourse.expert.product.domain.entity;
 
+import com.springcourse.expert.category.domain.Category;
+import com.springcourse.expert.productDetail.domain.ProductDetail;
+import com.springcourse.expert.review.domain.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.List;
 
 @AllArgsConstructor
 /*@Data es mala practica en entitys
@@ -22,4 +27,10 @@ public class Product {
     private String description;
     private Double price;
     private String image;
+
+    private ProductDetail productDetail;
+
+    private List<Review> reviews;
+
+    private List<Category> categories;
 }

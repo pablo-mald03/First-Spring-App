@@ -1,5 +1,6 @@
 package com.springcourse.expert.product.infrastructure.api.mapper;
 
+import com.springcourse.expert.category.domain.Category;
 import com.springcourse.expert.product.application.command.create.CreateProductRequest;
 import com.springcourse.expert.product.application.command.update.UpdateProductRequest;
 import com.springcourse.expert.product.domain.entity.Product;
@@ -7,8 +8,11 @@ import com.springcourse.expert.product.infrastructure.api.dto.CreateProductDto;
 import com.springcourse.expert.product.infrastructure.api.dto.ProductDto;
 import com.springcourse.expert.product.infrastructure.api.dto.UpdateProductDto;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
+
+import java.util.List;
 
 /*
  * MappingConstants.ComponentModel.SPRING: PERMITE COMUNICARLE A SPRING QUE A LA HORA DE ARRANCAR CREARA UN BEAN
@@ -47,7 +51,16 @@ public interface ProductMapper {
 
     UpdateProductRequest mapToUpdateProductRequest(UpdateProductDto productDto);
 
+
+    @Mapping(target = "provider", source = "productDetail.provider")
     ProductDto mapToProductDto(Product product);
 
+    /*
+     * METODO QUE PERMITE GENERAR OPERACIONES DE MAPEO NECESARIAS
+     *
+     * */
+    default List<String> mapToCategoryNames(List<Category> categories) {
+        return categories.stream().map(Category::getName).toList();
+    }
 
 }

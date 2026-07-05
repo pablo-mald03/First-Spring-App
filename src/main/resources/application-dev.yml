@@ -17,6 +17,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        #Permite ver las querys sql que se han ejecutado en la base de datos
+        show_sql: true
+        format_sql: true
 
   servlet:
     multipart:

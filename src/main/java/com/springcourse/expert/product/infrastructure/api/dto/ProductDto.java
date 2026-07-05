@@ -2,6 +2,8 @@ package com.springcourse.expert.product.infrastructure.api.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 /*
  * EL DTO PERMITE GENERAR LOGICA DE VALIDACIONES Y PERMITE PASAR LA INFORMACION A UNA ENTIDAD
  *
@@ -19,5 +21,13 @@ public class ProductDto {
     private String description;
     private Double price;
     private String image;
+    private String provider;
 
+
+    private List<ReviewDto> reviews;
+
+    /*
+     * Se restringe el retorno
+     * */
+    private List<String> categories;
 }

@@ -76,7 +76,7 @@ public class ProductSeeder implements CommandLineRunner {
              * PERMITE OBTENER EL JSON CON INFORMACION DESDE LOS RECURSOS DE LA APLICACION
              * */
             Resource resource = resourceLoader.getResource("classpath:products.json");
-            List<ProductEntity> productEntities = objectMapper.readValue(resource.getInputStream(), new TypeReference<List<ProductEntity>>() {
+            List<ProductEntity> productEntities = objectMapper.readValue(resource.getInputStream(), new TypeReference<>() {
             });
 
 

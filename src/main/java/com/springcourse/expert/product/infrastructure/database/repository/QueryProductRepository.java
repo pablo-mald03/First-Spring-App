@@ -4,6 +4,7 @@ import com.springcourse.expert.product.infrastructure.database.entity.ProductEnt
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -90,4 +91,16 @@ public interface QueryProductRepository extends JpaRepository<ProductEntity, Lon
      */
 
     Page<ProductEntity> findAll(Specification<ProductEntity> specification, Pageable pageable);
+
+    /*
+     *
+     *  Al generar la query hace el join para traer su relacion
+     *  HACE UNAS SOLA QUERY HACIENDO UN JOIN
+     *  @EntityGraph(attributePaths = {"productDetailEntity"})
+     *
+     * PERMITE ESPECIFICAR QUE SE VA A CARGAR AL MOMENTO DE HACER LA QUERY. ES DECIR
+     * SE VA A CARGAR LOS DATOS DE ESAS TABLAS DIRECTO CUANDO SE BUSQUE EL OBJETO
+     * */
+    @EntityGraph(attributePaths = {"productDetail", "reviews", "categories"})
+    Optional<ProductEntity> findById(Long id);
 }

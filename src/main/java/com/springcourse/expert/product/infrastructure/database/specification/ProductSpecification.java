@@ -1,5 +1,6 @@
-package com.springcourse.expert.product.infrastructure.database.entity;
+package com.springcourse.expert.product.infrastructure.database.specification;
 
+import com.springcourse.expert.product.infrastructure.database.entity.ProductEntity;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ProductSpecification {
