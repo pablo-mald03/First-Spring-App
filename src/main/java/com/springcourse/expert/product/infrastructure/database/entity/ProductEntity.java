@@ -87,8 +87,11 @@ public class ProductEntity {
      *
      * REPRESENTAN LA CARDINALIDAD RESPECTIVA
      *
+     *
+     * SE AGREGA LA CASCADA. PARA QUE SE PUEDAN BORRAR, ELIMINAR Y MODIFICAR EN CASCADA
+     * SI EN DADO CASO CAMBIA EL PRODUCTO
      * */
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ReviewEntity> reviews = new ArrayList<>();
 
     @ManyToMany

@@ -6,10 +6,7 @@ import com.springcourse.expert.product.domain.entity.Product;
 import com.springcourse.expert.product.infrastructure.database.entity.ProductEntity;
 import com.springcourse.expert.review.domain.Review;
 import com.springcourse.expert.review.infrastructure.ReviewEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 /*
  * Los mappers de las entitys se especializan directaemente en database
@@ -43,4 +40,29 @@ public interface ProductEntityMapper {
 
     @Mapping(target = "products", ignore = true)
     CategoryEntity mapToCategoryEntity(Category category);
+
+    /*
+     * Esta anotacion @AfterMapping
+     *
+     * Indica un proceso que se llama cuando ya esta mapeada una entidad
+     *
+     * MUY IMPORTANTE REALIZARLO PORQUE REALMENTE AL IGNORAR EL product
+     *
+     * ESTO PERMITE QUE NO SE MAPEEN LAS REVIEWS O LAS LISTAS INTERNAS Y SIMPLEMENTE SE PERDERIAN
+     * TODAS
+     *
+     * POR LO TANTO HAY QUE CARGAR LAS QUE YA ESTAN EVITANDO QUE SE MODIFIQUEN
+     *
+     * SI EN DADO CASO NO SE CARGA UN CAMPO HAY QUE ESTAR SEGURO QUE NO SE AFECTE ALGO DIRECTAMENTE A CAMPOS
+     * YA QUE SI SE NULEAN DATOS ESTAS RELACIONES SE ELIMINARAN
+     *
+     * ESTO OCURRE MUCHO EN OneToMany ya que este solo tiene el target hacia una tabla
+     *
+     * */
+    @AfterMapping
+    default void linkReviews(@MappingTarget ProductEntity productEntity) {
+        if (productEntity.getReviews() != null) {
+            productEntity.getReviews().forEach(review -> review.setProduct(productEntity));
+        }
+    }
 }

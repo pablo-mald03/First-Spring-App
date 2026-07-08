@@ -1,8 +1,8 @@
 package com.springcourse.expert.product.application.command.update;
 
 import com.springcourse.expert.common.application.mediator.Request;
+import com.springcourse.expert.review.domain.Review;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 /*
  * SIEMPRE SE RECOMIENDA SEGUIR EL ESTANDAR
@@ -31,5 +31,14 @@ public class UpdateProductRequest implements Request<Void> {
     private String name;
     private String description;
     private Double price;
-    private MultipartFile file;
+
+    /*(RECUERDO PARA HACER PETICIONES MULTIPART)*/
+    //private MultipartFile file;
+
+    private String provider;
+
+    private Review review;
+
+    private Long categoryId;
+
 }

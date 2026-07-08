@@ -5,7 +5,6 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.web.multipart.MultipartFile;
 
 /*
  * EL DTO PERMITE GENERAR LOGICA DE VALIDACIONES Y PERMITE PASAR LA INFORMACION A UNA ENTIDAD
@@ -49,6 +48,12 @@ public class UpdateProductDto {
      *
      * */
 
-    private MultipartFile file;
+    //CAMPO MODIFICADO POR EVITAR LAS PETICIONES MULTIPART
+    //private MultipartFile file;
+    @NotBlank(message = "El proveedor es requerido")
+    private String provider;
 
+    private ReviewDto review;
+
+    private Long categoryId;
 }

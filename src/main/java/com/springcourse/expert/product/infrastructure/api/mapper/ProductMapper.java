@@ -6,7 +6,9 @@ import com.springcourse.expert.product.application.command.update.UpdateProductR
 import com.springcourse.expert.product.domain.entity.Product;
 import com.springcourse.expert.product.infrastructure.api.dto.CreateProductDto;
 import com.springcourse.expert.product.infrastructure.api.dto.ProductDto;
+import com.springcourse.expert.product.infrastructure.api.dto.ReviewDto;
 import com.springcourse.expert.product.infrastructure.api.dto.UpdateProductDto;
+import com.springcourse.expert.review.domain.Review;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -49,11 +51,20 @@ public interface ProductMapper {
 
     CreateProductRequest mapToCreateProductRequest(CreateProductDto productDto);
 
-    UpdateProductRequest mapToUpdateProductRequest(UpdateProductDto productDto);
+    UpdateProductRequest mapToUpdateProductRequest(UpdateProductDto updateProductDto);
 
 
     @Mapping(target = "provider", source = "productDetail.provider")
     ProductDto mapToProductDto(Product product);
+
+    /*
+     * IMPORTANTE DESTACAR QUE PARA QUE MAPSTRUCT PUEDA MAPEAR MAS ENTIDADES DENTRO DE OTRAS ENTIDADES
+     * SE DEBEN ESPECIFICAR LOS MAPEOS YA QUE SE AUTORECERENCIA ENTRE METODOS
+     *
+     * */
+    @Mapping(target = "product", ignore = true)
+    Review mapToReview(ReviewDto reviewDto);
+
 
     /*
      * METODO QUE PERMITE GENERAR OPERACIONES DE MAPEO NECESARIAS

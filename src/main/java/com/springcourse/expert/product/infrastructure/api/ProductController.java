@@ -189,9 +189,26 @@ public class ProductController implements ProductRestController {
      *      @ModelAttribute: ESPERA DATOS DE UN FORMULARIO HTML DE TIPO DATA
      *
      * */
+    /*
+     * (RECUERDO PARA HACER PETICIONES MULTIPART)
+     * */
+//    @Operation(summary = "Update product", description = "Update product")
+//    @PutMapping
+//    public ResponseEntity<Void> updateProduct(@ModelAttribute @Valid UpdateProductDto product) {
+//
+//        log.info("Updating product with id {}", product.getId());
+//
+//        /*PERMITE MAPEAR EL DTO QUE VIENE EN EL REQUEST HACIA EL HANDLER*/
+//        UpdateProductRequest request = productMapper.mapToUpdateProductRequest(product);
+//        mediator.dispatch(request);
+//
+//        log.info("Product with id {} was updated", product.getId());
+//        return ResponseEntity.noContent().build();
+//    }
+
     @Operation(summary = "Update product", description = "Update product")
     @PutMapping
-    public ResponseEntity<Void> updateProduct(@ModelAttribute @Valid UpdateProductDto product) {
+    public ResponseEntity<Void> updateProduct(@RequestBody @Valid UpdateProductDto product) {
 
         log.info("Updating product with id {}", product.getId());
 
