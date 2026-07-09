@@ -1,12 +1,9 @@
 package com.springcourse.expert.IT;
 
-import com.springcourse.expert.product.domain.entity.Product;
 import com.springcourse.expert.product.domain.port.ProductRepository;
 import com.springcourse.expert.product.infrastructure.api.dto.ProductDto;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
@@ -17,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * YA CONFIGURA AUTOMATICO EL PUERTO
  * */
 @SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT
 )
 @Slf4j
 /*
@@ -40,38 +38,45 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class ProductIT {
 
-    @Autowired(required = false)
+    @Autowired
     private TestRestTemplate restTemplate;
 
-    @Autowired(required = false)
+    @Autowired
     private ProductRepository productRepository;
 
     /*CLASE QUE PERMITE TESTEAR LOS ENDPOINTS CON MULTIPART*/
-    @Autowired(required = false)
+    @Autowired
     private MockMvc mockMvc;
 
     /*
      * Metodo que permite generar instancias o valores. Es decir generar valores para poder testear los metodos
      * ya que se ejecuta el metodo antes de iniciar el test
      * */
-    @BeforeEach
-    void setUp() {
-        log.info("Setting up integration tests");
-        productRepository.save(Product.builder().id(1L).name("Product 1").description("Description 1").price(100.0).build());
-
-    }
+//    @BeforeEach
+//    void setUp() {
+//        log.info("Setting up integration tests");
+//        productRepository.save(Product.builder().id(1L).name("Product 1").description("Description 1").price(100.0).build());
+//
+//    }
+//
+//    /*
+//     * Metodo que permite
+//     *
+//     * */
+//    @AfterEach
+//    void tearDown() {
+//
+//        log.info("Tearing down integration tests");
+//        productRepository.deleteById(1L);
+//    }
 
     /*
-     * Metodo que permite
+     * SE ESPECIFICAN LOS PARAMETROS A SEGUIR ANTES DE EJECUTAR EL TEST DE INTEGRACION
      *
+     * Y LUEGO COMO VA A LIMPIAR LOS DATOS INSERTADOS EN LA TABLA
      * */
-    @AfterEach
-    void tearDown() {
-
-        log.info("Tearing down integration tests");
-        productRepository.deleteById(1L);
-    }
-
+    @Sql(value = "/it/product/findById/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/it/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     void getProductByIDExists() {
 
@@ -82,10 +87,11 @@ class ProductIT {
         Assertions.assertNotNull(response.getBody());
         assertEquals("Product 1", response.getBody().getName());
         assertEquals("Description 1", response.getBody().getDescription());
-        assertEquals(100.0, response.getBody().getPrice());
+        assertEquals(199.0, response.getBody().getPrice());
 
     }
 
+    @Sql(value = "/it/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void saveProduct() throws Exception {
 

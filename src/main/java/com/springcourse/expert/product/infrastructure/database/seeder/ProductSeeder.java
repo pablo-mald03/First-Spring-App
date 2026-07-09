@@ -5,6 +5,7 @@ import com.springcourse.expert.product.infrastructure.database.mapper.ProductEnt
 import com.springcourse.expert.product.infrastructure.database.repository.QueryProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,10 @@ import java.util.List;
  * LA INTERFACE CommandLineRunner PERMITE EJECUTAR COMANDOS
  * DIRECTAMENTE AL INICIALIZAR LA APLICACION (ESTO OCURRE A NIVEL APLICACION NO DEPENDE DEL MODO EN EL QUE CORRA SPRING)
  * */
+/*
+ * @Profile: Permite definir en que perfiles se van a ejecutar las clases
+ * */
+@Profile("!test")
 public class ProductSeeder implements CommandLineRunner {
 
     /*

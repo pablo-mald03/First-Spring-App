@@ -23,6 +23,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
 
     depends_on:
+      #Depende de que el servicio de postgres este en linea y funcionando correctamente
       postgres:
         condition: service_healthy
     healthcheck:
