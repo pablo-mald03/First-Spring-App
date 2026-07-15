@@ -22,7 +22,7 @@ public class ReviewEntity {
     /*
      * Representa una relacion de uno a muchos
      * */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
 
     /*
      * Representa a la columna de foreing key mediante la que se va a relacionar la review

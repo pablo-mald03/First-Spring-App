@@ -1,7 +1,7 @@
 #Se usa ESTA CONFIGURACION EN PRODUCCION
 #Se usa .yml para que tenga una forma de arbol y se usa mucho en entornos empresariales
 spring:
-
+  
   #se configuran los puertos en los que va a estar
   datasource:
     #Puerto al que se va a conectar y la base de datos a la que se va a conectar
@@ -10,13 +10,40 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      auto-commit: false
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000    # 5 min
+      max-lifetime: 1800000   # 30 min
+      connection-timeout: 30000 # 30 s
+      leak-detection-threshold: 2000  # 2 s
+    #Se especifican las configuraciones para poder correr flyway
+    #CUANDO SE USAN MIGRACIONES ESTAS VAN A IR CREANDO LAS TABLAS DEL ESQUEMA DE LA BASE DE DATOS
+    #NO ES NECESARIO QUE JPA LAS CREE
+  flyway:
+    #Activacion de flyway
+
+    enabled: true
+    #Las sentencias sql que flyway se hagan rollback o no. ya que pueden fallar
+    #Es importante destacar que en el caso de estar activado la base de datos va a estar cambiando de indices
+    #y si esto lo detecta va a hacer rollbacks
+    execute-in-transaction: false
+    #Base de datos a la que se va a conectar para tomar como punto de inicio para correr las migraciones
+    baseline-on-migrate: false
+    #Valicaciones de las migraciones
+    validate-on-migrate: true
+    #Ubicacion donde se van a encontrar las migraciones (SE ESPECIFICA EN RESOURCES)
+    locations: classpath:db/migration
 
   jpa:
     hibernate:
       #ES UNA CONFIGURACION QUE LE PERMITE A HIBERNATE ALTERAR EL ESQUEMA DE LA BASE DE DATOS
       #EXISTEN VARIAS CONFIGURACIONES. (SIEMPRE SE USA UPDATE PORQUE MODIFICA SI ES NECESARIO. CASO CONTRARIO NO)
       #Pero existen varios perfiles
-      ddl-auto: update
+      #validate: permite validar si existen las tablas o campos en la base de datos
+      #update: crea y verifica si existe
+      ddl-auto: validate
       naming:
         #La forma que utiliza Hibernate para poder transformar los atributos de Java a los campos de las tablas
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl

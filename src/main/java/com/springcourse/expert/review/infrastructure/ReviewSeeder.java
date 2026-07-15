@@ -1,7 +1,10 @@
 package com.springcourse.expert.review.infrastructure;
 
+import com.springcourse.expert.product.infrastructure.database.entity.ProductEntity;
+import com.springcourse.expert.product.infrastructure.database.repository.QueryProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -12,7 +15,10 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Order(4)
 public class ReviewSeeder implements CommandLineRunner {
+
+    private final QueryProductRepository queryProductRepository;
 
     /*
      * Se vinculan los nuevos repositorios que gestionan los details del producto
@@ -31,9 +37,31 @@ public class ReviewSeeder implements CommandLineRunner {
         if (count == 0) {
 
             Resource resource = resourceLoader.getResource("classpath:reviews.json");
-            List<ReviewEntity> reviewEntities = objectMapper.readValue(resource.getInputStream(), new TypeReference<>() {
-            });
-            queryReviewRepository.saveAll(reviewEntities);
+
+            List<ReviewSeed> reviews = objectMapper.readValue(
+                    resource.getInputStream(),
+                    new TypeReference<>() {
+                    }
+            );
+            
+            List<ReviewEntity> entities = reviews.stream()
+                    .map(review -> {
+
+                        ProductEntity product = queryProductRepository
+                                .findById(review.getProductId())
+                                .orElseThrow();
+
+                        ReviewEntity entity = new ReviewEntity();
+
+                        entity.setComment(review.getComment());
+                        entity.setScore(review.getScore());
+                        entity.setProduct(product);
+
+                        return entity;
+                    })
+                    .toList();
+
+            queryReviewRepository.saveAll(entities);
         }
 
 

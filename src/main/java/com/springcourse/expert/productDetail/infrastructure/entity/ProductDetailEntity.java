@@ -11,7 +11,7 @@ import lombok.*;
 @Setter
 @Builder
 @Entity
-@Table(name = "product_detail")
+@Table(name = "product_details")
 public class ProductDetailEntity {
 
     @Id
@@ -31,7 +31,8 @@ public class ProductDetailEntity {
      * @JoinColumn(name = "productDetailEntity")
      *
      * */
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "product_detail_id")
+    /*@OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_detail_id")*/
+    @OneToOne(mappedBy = "productDetail")
     private ProductEntity product;
 }

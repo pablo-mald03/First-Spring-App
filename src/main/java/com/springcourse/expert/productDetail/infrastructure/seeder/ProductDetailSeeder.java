@@ -4,6 +4,7 @@ import com.springcourse.expert.productDetail.infrastructure.entity.ProductDetail
 import com.springcourse.expert.productDetail.infrastructure.repository.QueryProductDetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Order(2)
 public class ProductDetailSeeder implements CommandLineRunner {
 
     /*

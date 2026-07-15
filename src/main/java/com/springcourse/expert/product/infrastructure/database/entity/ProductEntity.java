@@ -1,6 +1,7 @@
 package com.springcourse.expert.product.infrastructure.database.entity;
 
 import com.springcourse.expert.category.infrastructure.CategoryEntity;
+import com.springcourse.expert.common.infrastructure.entity.AuditableEntity;
 import com.springcourse.expert.productDetail.infrastructure.entity.ProductDetailEntity;
 import com.springcourse.expert.review.infrastructure.ReviewEntity;
 import jakarta.persistence.*;
@@ -36,14 +37,22 @@ import java.util.List;
 
 /*Se le puede dar un nombre para tener un target de la tabla*/
 @Table(name = "products")
-public class ProductEntity {
+public class ProductEntity extends AuditableEntity {
 
     /*Permite poder integrar una llave primaria al objeto*/
     @Id
     /*
      * Permite definir un ID auto incremental
      * */
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "products_seq"
+    )
+    @SequenceGenerator(
+            name = "products_seq",
+            sequenceName = "products_id_seq",
+            allocationSize = 1
+    )
     private Long id;
     private String name;
     @Column(length = 300)

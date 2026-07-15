@@ -6,6 +6,7 @@ import com.springcourse.expert.product.infrastructure.database.repository.QueryP
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,7 @@ import java.util.List;
  * @Profile: Permite definir en que perfiles se van a ejecutar las clases
  * */
 @Profile("!test")
+@Order(1)
 public class ProductSeeder implements CommandLineRunner {
 
     /*

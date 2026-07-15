@@ -2,6 +2,7 @@ package com.springcourse.expert.common.infrastructure.config;
 
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -41,5 +42,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * LE INDICA A SPRING QUE CACHEARA INFORMACION REQUERIDA POR EL USUARIO MULTIPLES VECES
  * */
 @EnableCaching
+/*
+ *
+ * */
+@EnableJpaAuditing
 public class ApplicationConfig {
 }
