@@ -8,5 +8,4 @@ spring:
     #Se pueden pasar variables de entorno y configurarlas (DESDE DOCKER)
     #Esto permite poder especificar variables de entorno que pueden manejarse desde docker porque el solito las inserta
     #${VARIABLE_ENTORNO:valorPorDefecto}
-    #active: ${SPRING_PROFILES_ACTIVE:dev}
-    active: prod
+    active: ${SPRING_PROFILES_ACTIVE:dev}

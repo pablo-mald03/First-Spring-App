@@ -164,6 +164,8 @@ No son Annotation Processors:
             <scope>runtime</scope>
         </dependency>
 
+        <!--DEPENDENCIAS EN CONJUNTO QUE PERMITEN USAR FLYWAY EN SPRINGBOOT 4-->
+
         <!-- The Core Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -174,6 +176,25 @@ No son Annotation Processors:
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
             <scope>runtime</scope>
+        </dependency>
+
+        <!--DEPENDENCIAS IMPORTANTES PARA PODER GENERAR JSON WEB TOKENS Y PODER VALIDARLOS VERSION MAS RECIENTE Y RECOMENDADA .0.13.0-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.11.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.11.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.11.5</version>
         </dependency>
 
 
