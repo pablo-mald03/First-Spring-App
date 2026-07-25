@@ -18,11 +18,13 @@ import com.springcourse.expert.product.infrastructure.api.dto.ProductDto;
 import com.springcourse.expert.product.infrastructure.api.dto.UpdateProductDto;
 import com.springcourse.expert.product.infrastructure.api.mapper.ProductMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -36,6 +38,11 @@ import java.net.URI;
 @Tag(name = "Product", description = "Product API operations")
 /*Anotacion de lombok para poder logguear*/
 @Slf4j
+
+/*
+ * DECORADOR QUE PERMITE ESPECIFICAR EN LA PAGINA DE LA UI QUE APAREZCA CON AUTENTICACION REQUERIDA
+ * */
+@SecurityRequirement(name = "Bearer Authentication")
 public class ProductController implements ProductRestController {
 
 
@@ -134,6 +141,11 @@ public class ProductController implements ProductRestController {
 
     @Operation(summary = "Get product by id", description = "Get product by id")
     @GetMapping("/{id}")
+
+    /*
+     * DECORADOR QUE PERMITE RESTRINGIR UN ENDPOINT PARA CIERTO ROL DE USUARIO
+     * */
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
 
         log.info("Getting product with id: {}", id);

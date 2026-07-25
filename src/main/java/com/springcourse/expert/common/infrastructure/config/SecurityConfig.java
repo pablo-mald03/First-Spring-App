@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,6 +19,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * */
 @Configuration
 @EnableWebSecurity
+/*
+ * PERMITE AGREGAR CIERTAS FUNCIONALIDADES PARA PODER RESTRINGIR CIERTOS ENDPOINTS
+ * */
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -41,13 +46,22 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                                /*LOS REQUEST MATCHERS PERMITEN DEFINIR QUE METODOS HTTP SE PUEDEN CONSUMIR */
+                                /*LOS REQUEST MATCHERS PERMITEN DEFINIR QUE METODOS HTTP SE PUEDEN CONSUMIR
+                                 * EN BASE A LOS ROLES QUE SE LE ESPECIFIQUEN
+                                 * */
                                 .requestMatchers(
-                                        "/api/v1/products/**",
+                                        // "/api/v1/products/**",
                                         "/api/v1/users/login",
-                                        "/api/v1/users/register"
+                                        "/api/v1/users/register",
+                                        /*URL'S PARA PODER VER LA DOCUMENTACION DE LA API*/
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html",
+                                        "/proxy/**"
 
+                                        /*PERMINTALL permite que todos los usuarios puedan acceder directamente a esos endpoints*/
                                 ).permitAll()
+                                .requestMatchers("/actuator/**").hasAuthority("ADMIN")
                                 .anyRequest().authenticated()
                         /*SE PUEDEN DEFINIR INCLUSO QUE METODOS SOLO SE PUEDEN USAR EN ESA URL*/
                         //.requestMatchers(HttpMethod.POST, "/api/v1/products/**").authenticated()

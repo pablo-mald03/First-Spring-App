@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
@@ -42,6 +43,15 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
 
+    /*
+     * LA FORMA DE PODER IMPLEMENTAR EXCEPCIONES QUE NOTIFIQUEN DE FORMA CORRECTA EL ERROR DE AUTENTICACION
+     * ES UTILIZANDO LA INTERFACE:
+     *
+     * HandlerExceptionResolver
+     *
+     * */
+    private final HandlerExceptionResolver handlerExceptionResolver;
+
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
 
@@ -62,70 +72,78 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = authorization.substring(7);
 
-        boolean tokenExpired = jwtService.isTokenExpired(token);
+        try {
+            boolean tokenExpired = jwtService.isTokenExpired(token);
+            boolean canBeTokenRenewed = jwtService.canBeTokenRenewed(token);
 
-        boolean canBeTokenRenewed = jwtService.canBeTokenRenewed(token);
+            /*
+             * SI EL TOKEN ESTA EXPIRADO Y NOO PUEDE SER RENOVADO
+             * */
+            if (tokenExpired && !canBeTokenRenewed) {
+                log.error("Token expired");
+                filterChain.doFilter(request, response);
+                return;
+            }
 
-        /*
-         * SI EL TOKEN ESTA EXPIRADO Y NOO PUEDE SER RENOVADO
-         * */
-        if (tokenExpired && !canBeTokenRenewed) {
-            log.error("Token expired");
-            filterChain.doFilter(request, response);
-            return;
+            String username = jwtService.getUsername(token);
+
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+            /*
+             * PERMITE PODER VALIDAR UN USUARIO REAL REGISTRADO EN LA BASE DE DATOS.
+             *
+             * ESTE SI OBTIENE UN USUARIO REAL DE LA BASE DE DATOS
+             * */
+            boolean validToken = jwtService.isValidToken(token, userDetails);
+
+            /*
+             * Se valida el caso en el que no se pueda obtener el username y se genera el respectivo response
+             * */
+            if (!validToken || SecurityContextHolder.getContext().getAuthentication() != null) {
+                log.error("Invalid token or user already authenticated");
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            /*
+             * SI EL TOKEN ESTA EXPIRADO Y PUEDE SER RENOVADO
+             *
+             * ENTONCES SE HACE EL SET HACIA EL HEADER DEL RESPONSE PARA QUE ESTE
+             * SEA RENOVADO/REEMPLAZADO Y PODRA SEGUIR PASANDO POR EL FILTRO
+             * */
+            if (tokenExpired && canBeTokenRenewed) {
+                String renewToken = jwtService.renewToken(token, userDetails);
+                response.setHeader("Authorization", "Bearer " + renewToken);
+            }
+
+            /*
+             * Instancia que permite poder autenticar al usuario con los detalles que este tenga
+             *
+             * al igual que los roles que tenga
+             * */
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    userDetails.getAuthorities()
+            );
+            /*
+             * Se le agregan los detalles desde donde se ha hecho la autenticacion
+             * para poder tener el contexto al respecto
+             * */
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            /*
+             * Es donde esta el contexto de las autenticaciones para que se tome en cuenta
+             *
+             * */
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        } catch (Exception e) {
+
+            /*
+             * PERMITE SOLTAR LA EXCEPCION PARA PODER INTERCEPTARLA DESDE EL HANDLER
+             * */
+            log.error("Error while processing request: {}", e.getMessage());
+            handlerExceptionResolver.resolveException(request, response, null, e);
         }
-
-        String username = jwtService.getUsername(token);
-
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-        /*
-         * PERMITE PODER VALIDAR UN USUARIO REAL REGISTRADO EN LA BASE DE DATOS.
-         *
-         * ESTE SI OBTIENE UN USUARIO REAL DE LA BASE DE DATOS
-         * */
-        boolean validToken = jwtService.isValidToken(token, userDetails);
-
-        /*
-         * Se valida el caso en el que no se pueda obtener el username y se genera el respectivo response
-         * */
-        if (!validToken || SecurityContextHolder.getContext().getAuthentication() != null) {
-            log.error("Invalid token or user already authenticated");
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        /*
-         * SI EL TOKEN ESTA EXPIRADO Y PUEDE SER RENOVADO
-         *
-         * ENTONCES SE HACE EL SET HACIA EL HEADER DEL RESPONSE PARA QUE ESTE
-         * SEA RENOVADO/REEMPLAZADO Y PODRA SEGUIR PASANDO POR EL FILTRO
-         * */
-        if (tokenExpired && canBeTokenRenewed) {
-            String renewToken = jwtService.renewToken(token, userDetails);
-            response.setHeader("Authorization", "Bearer " + renewToken);
-        }
-
-        /*
-         * Instancia que permite poder autenticar al usuario con los detalles que este tenga
-         *
-         * al igual que los roles que tenga
-         * */
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                userDetails,
-                null,
-                userDetails.getAuthorities()
-        );
-        /*
-         * Se le agregan los detalles desde donde se ha hecho la autenticacion
-         * para poder tener el contexto al respecto
-         * */
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        /*
-         * Es donde esta el contexto de las autenticaciones para que se tome en cuenta
-         *
-         * */
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         /*
          * Se pasa al siguiente filtro de autenticacion
