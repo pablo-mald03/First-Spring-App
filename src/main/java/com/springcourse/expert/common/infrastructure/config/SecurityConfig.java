@@ -1,16 +1,16 @@
 package com.springcourse.expert.common.infrastructure.config;
 
+import com.springcourse.expert.common.infrastructure.filters.JwtFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /*
  * Clase que permite activar las configuraciones de seguridad de la aplicacion
@@ -18,8 +18,17 @@ import org.springframework.security.web.SecurityFilterChain;
  * */
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
+    /*
+     * Se declara el servicio para poder utilizar el jwtFilter
+     * */
+    private final JwtFilter jwtFilter;
+
+    /*SE DEBE DEFINIR CORRECTAMENTE TODOS LOS CAMPOS QUE DEBE TENER LA AUTENTICACION
+     * PARA PODER TOMAR EL USUARIO DE LA BASE DE DATOS Y PODER VERIFICAR EL PERMISO HACIA LOS ENDPOINTS*/
+    private final AuthenticationProvider authenticationProvider;
 
     /*
      * CORS: Cross origin, permite recibir peticiones desde otros lugares
@@ -36,7 +45,7 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/api/v1/products/**",
                                         "/api/v1/users/login",
-                                        "/api/v1/register"
+                                        "/api/v1/users/register"
 
                                 ).permitAll()
                                 .anyRequest().authenticated()
@@ -50,23 +59,31 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(
                         SessionCreationPolicy.STATELESS //INDICA QUE LA SESION NO VA A TENER ESTADO Y SE BASARA EN JWT
                 ))
+                .authenticationProvider(authenticationProvider)
+                /*
+                 * Se le agrega el filtro para poder verificar que se este autenticado con el jwt
+                 * */
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 /*Se quita la autenticacion basica*/
                 //.httpBasic(Customizer.withDefaults())
                 .build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user = User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("password")
-                .roles("USER")
-                .build();
-        UserDetails admin = User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("password")
-                .roles("ADMIN", "USER")
-                .build();
-        return new InMemoryUserDetailsManager(user, admin);
-    }
+    /*
+     * METODO O BEAN QUE PERMITIA REALIZAR LA AUTENTICACION DEL USUARIO (RECUERDO)
+     * */
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        UserDetails user = User.withDefaultPasswordEncoder()
+//                .username("user")
+//                .password("password")
+//                .roles("USER")
+//                .build();
+//        UserDetails admin = User.withDefaultPasswordEncoder()
+//                .username("admin")
+//                .password("password")
+//                .roles("ADMIN", "USER")
+//                .build();
+//        return new InMemoryUserDetailsManager(user, admin);
+//    }
 }

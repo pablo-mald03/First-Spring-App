@@ -1,4 +1,4 @@
-package com.springcourse.expert.user.infrastructure;
+package com.springcourse.expert.user.infrastructure.api.dto;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import lombok.Data;
  * Clase que permite retornar los datos del login
  * */
 @Data
-public class LoginResponseDto {
+public class TokenResponseDto {
 
     private String token;
 }

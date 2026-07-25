@@ -6,7 +6,9 @@ spring:
   jwt:
     #Nombre de la variable
     secret: ${SECRET}
-    expiration: 86400000
+    #expiration: 86400000
+    expiration: ${JWT_EXPIRATION}
+    refresh-window: ${JWT_REFRESH_WINDOW}
   #se configuran los puertos en los que va a estar la base de datos y credenciales
   datasource:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
