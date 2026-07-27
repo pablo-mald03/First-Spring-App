@@ -2,6 +2,17 @@
 #Se usa .yml para que tenga una forma de arbol y se usa mucho en entornos empresariales
 spring:
 
+  #Especificacion del registro OAUTH de usuarios
+  security:
+    oauth2:
+      #Se define el cliente que se va a permitir consumir desde la aplicacion
+      client:
+        registration:
+          #Github permite implementar este servicio de forma facil PERO SE PUEDEN AGREGAR MAS FORMAS OAUTH
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+
   #Se pueden definir variables que se pueden utilizar como variables de entorno para poderlas usar en la aplicacion
   jwt:
     #Nombre de la variable

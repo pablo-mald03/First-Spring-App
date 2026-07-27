@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -70,10 +71,32 @@ public class SecurityConfig {
                          * caso contrario pedira la autenticacion basica*/
 
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(
-                        SessionCreationPolicy.STATELESS //INDICA QUE LA SESION NO VA A TENER ESTADO Y SE BASARA EN JWT
-                ))
                 .authenticationProvider(authenticationProvider)
+                /*SE HABILITA UN FORMULARIO DE LOGIN PARA PODER INICIAR SESION
+                 * ES UNA PAGINA PROPIA QUE GENERIA SPRING PARA PODER USAR LOGINS
+                 * */
+                .formLogin(Customizer.withDefaults())
+                /*
+                 *Customizer.withDefaults() PERMITE REDIRIGIR  A LA URL BASE DE LA API
+                 * */
+                .oauth2Login(Customizer.withDefaults())
+
+                /*TAMBIEN SE PUEDE UTILIZAR UNA REDIRECCION AUTOMATICA HACIA UNA URL (PERO NO ES UTILIZADO POR APIS, ES MAS POR CLIENTES)
+                 *
+                 * ESTO REDIRIGE AL USUARIO A LA URL DESTINADA PARA PROCEDER DESPUES DE LOGIN EXITOSO
+                 *
+                 * .oauth2Login(httpSecurityOAuth2LoginConfigurer ->
+                        httpSecurityOAuth2LoginConfigurer.defaultSuccessUrl("/dashboard",true))
+
+                 * */
+
+                .sessionManagement(session -> session.sessionCreationPolicy(
+                        //SessionCreationPolicy.STATELESS //INDICA QUE LA SESION NO VA A TENER ESTADO Y SE BASARA EN JWT
+
+                        SessionCreationPolicy.IF_REQUIRED /*SI ES NECESARIO MANTENER LA SESION NO ES MUY UTILIZADO PORQUE
+                                                            UNA API REST NO ES NECESARIO QUE UTILICE EL OAUTH2 SOLO ES A NIVEL CLIENTE
+                         */
+                ))
                 /*
                  * Se le agrega el filtro para poder verificar que se este autenticado con el jwt
                  * */
